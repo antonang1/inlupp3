@@ -1,5 +1,5 @@
 package org.ioopm.calculator.ast;
 
-public class Quit {
+public class Quit extends Command {
 
 }

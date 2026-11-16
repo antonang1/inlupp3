@@ -1,5 +1,5 @@
 package org.ioopm.calculator.ast;
 
-public class Vars {
+public class Vars extends Command {
 
 }

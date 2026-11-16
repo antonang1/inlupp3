@@ -1,5 +1,4 @@
 package org.ioopm.calculator.ast;
 
-public class Atom {
-
+public abstract class Atom extends SymbolicExpression {
 }

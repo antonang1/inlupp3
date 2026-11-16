@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
-public class Log {
-
-}
+public class Log extends Unary {
+    public Log(SymbolicExpression lhs) {
+        super(lhs);
+    }
+} 

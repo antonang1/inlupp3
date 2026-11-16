@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
-public class Exp {
-
+public class Exp extends Unary {
+    public Exp(SymbolicExpression lhs) {
+        super(lhs);
+    }
 }

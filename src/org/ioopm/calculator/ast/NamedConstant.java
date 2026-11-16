@@ -1,5 +1,5 @@
 package org.ioopm.calculator.ast;
 
-public class NamedConstant {
+public class NamedConstant extends Atom {
 
 }

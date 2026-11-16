@@ -1,5 +1,4 @@
 package org.ioopm.calculator.ast;
 
-public class Command {
-
+public abstract class Command extends SymbolicExpression {
 }
