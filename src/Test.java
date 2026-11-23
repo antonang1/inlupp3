@@ -1,7 +1,7 @@
 import org.ioopm.calculator.ast.*;
 
 public class Test {
-    public void testPrinting(String expected, SymbolicExpression e) {
+    public static void testPrinting(String expected, SymbolicExpression e) {
         if (expected.equals("" + e)) {
             System.out.println("Passed: " + e);
         } else {
@@ -9,7 +9,7 @@ public class Test {
         }
     }
 
-    public void testEvaluating(SymbolicExpression expected, SymbolicExpression e, Environment vars) {
+    public static void testEvaluating(SymbolicExpression expected, SymbolicExpression e, Environment vars) {
         SymbolicExpression r = e.eval(vars);
         if (r.equals(expected)) {
             System.out.println("Passed: " + e + " => " + r);
@@ -33,7 +33,7 @@ public class Test {
         }
     }
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         // ---------- eval() utan variabler (ny Environment per test) ----------
         testEvaluating(new Constant(5), new Constant(5), new Environment());
         testEvaluating(new Constant(7),
