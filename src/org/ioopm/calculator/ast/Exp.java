@@ -6,12 +6,13 @@ public class Exp extends Unary {
     }
 
     @Override
-    public String getName() { return "exp"; }
+    public String getName() {
+        return "exp";
+    }
 
-    public SymbolicExpression eval() {
-        SymbolicExpression arg = this.getArgument().eval();
-        if (arg.isConstant())
-        {
+    public SymbolicExpression eval(Environment vars) {
+        SymbolicExpression arg = this.getArgument().eval(vars);
+        if (arg.isConstant()) {
             return new Constant(Math.exp(arg.getValue()));
         } else {
             return new Exp(arg);

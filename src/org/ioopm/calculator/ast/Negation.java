@@ -5,14 +5,14 @@ public class Negation extends Unary {
         super(lhs);
     }
 
-    @Override 
-    public String getName() { return "-"; }
+    @Override
+    public String getName() {
+        return "-";
+    }
 
-    public SymbolicExpression eval()
-    {
-        SymbolicExpression arg = this.getArgument().eval();
-        if (arg.isConstant())
-        {
+    public SymbolicExpression eval(Environment vars) {
+        SymbolicExpression arg = this.getArgument().eval(vars);
+        if (arg.isConstant()) {
             return new Constant(arg.getValue() * -1);
         } else {
             return new Negation(arg);

@@ -6,16 +6,16 @@ public class Log extends Unary {
     }
 
     @Override
-    public String getName() { return "log"; }
+    public String getName() {
+        return "log";
+    }
 
-    public SymbolicExpression eval()
-    {
-        SymbolicExpression arg = this.getArgument().eval();
-        if (arg.isConstant())
-        {
+    public SymbolicExpression eval(Environment vars) {
+        SymbolicExpression arg = this.getArgument().eval(vars);
+        if (arg.isConstant()) {
             return new Constant(Math.log(arg.getValue()));
         } else {
             return new Log(arg);
         }
     }
-} 
+}

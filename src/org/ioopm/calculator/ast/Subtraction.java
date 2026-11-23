@@ -6,15 +6,19 @@ public class Subtraction extends Binary {
     }
 
     @Override
-    public String getName() { return "-"; }
+    public String getName() {
+        return "-";
+    }
 
-    @Override 
-    public int getPriority() { return 50; }
+    @Override
+    public int getPriority() {
+        return 50;
+    }
 
-    public SymbolicExpression eval() {
-        SymbolicExpression lhs_eval = this.getLhs().eval();
-        SymbolicExpression rhs_eval = this.getRhs().eval();
-        
+    public SymbolicExpression eval(Environment vars) {
+        SymbolicExpression lhs_eval = this.getLhs().eval(vars);
+        SymbolicExpression rhs_eval = this.getRhs().eval(vars);
+
         if (lhs_eval.isConstant() && rhs_eval.isConstant()) {
             return new Constant(lhs_eval.getValue() - rhs_eval.getValue());
         } else {
