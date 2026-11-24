@@ -34,6 +34,45 @@ public class Test {
     }
 
     public static void main(String[] args) {
+        System.out.println("=== TESTING NAMED CONSTANTS ===");
+
+        // Test 1: Check that pi exists
+        if (Constants.namedConstants.containsKey("pi")) {
+        System.out.println("PASS: Found pi");
+        } else {
+        System.out.println("FAIL: Could not find pi");
+        }
+
+        // Test 2: Check pi's value
+        double piValue = Constants.namedConstants.get("pi");
+
+        if (piValue == Math.PI) {
+        System.out.println("PASS: pi has the correct value");
+        } else {
+        System.out.println("FAIL: pi has an incorrect value");
+        }
+
+        // Test 3: Create and evaluate a NamedConstant
+        NamedConstant pi = new NamedConstant(
+        "pi",
+        Constants.namedConstants.get("pi")
+        );
+
+        if (pi.eval(new Environment()) == pi) {
+        System.out.println("PASS: NamedConstant evaluates to itself");
+        } else {
+        System.out.println("FAIL: NamedConstant evaluation failed");
+        }
+
+        // Test 4: Check an unknown name
+        if (!Constants.namedConstants.containsKey("unknown")) {
+        System.out.println("PASS: Unknown name is not a named constant");
+        } else {
+        System.out.println("FAIL: Unknown name was found");
+        }
+
+        testEvaluating(pi, new Assignment(new Constant(4), pi), new Environment());
+        /*
         // ---------- eval() utan variabler (ny Environment per test) ----------
         testEvaluating(new Constant(5), new Constant(5), new Environment());
         testEvaluating(new Constant(7),
@@ -104,6 +143,7 @@ public class Test {
         testEvaluating(new Constant(2),
                 new Addition(new Assignment(new Constant(1), new Variable("x")), new Variable("x")),
                 new Environment());
+         */
 
         /*
          * ---------- Gamla tester (printing/equals) ----------

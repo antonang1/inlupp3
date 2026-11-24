@@ -19,6 +19,11 @@ public class NamedConstant extends Atom {
         return this.value;
     }
 
+    @Override 
+    public String getName() {
+        return this.name;
+    }
+
     @Override // för att equals() finns redan i superklassen Object.
     public boolean equals(Object other) {
         if (other instanceof NamedConstant) {

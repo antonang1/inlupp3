@@ -1,2 +1,1 @@
-påbörjat:
-    equals för allt. Har gjort för Atom, Unary. BÖRJA MED BINARY OCH COMMAND.
+Mål I23 någonstanns?!
