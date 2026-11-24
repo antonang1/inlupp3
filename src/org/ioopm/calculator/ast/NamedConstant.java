@@ -39,7 +39,7 @@ public class NamedConstant extends Atom {
     }
 
     public String toString() {
-        return "" + name;
+        return "" + value;
     }
 
     public SymbolicExpression eval(Environment vars) {
