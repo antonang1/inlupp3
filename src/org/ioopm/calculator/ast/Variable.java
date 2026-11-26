@@ -16,13 +16,13 @@ public class Variable extends Atom {
         }
     }
 
+    public boolean equals(Variable other) {
+        return this.identifier.equals(other.identifier);
+    }
+
     @Override
     public int hashCode() {
         return this.identifier.hashCode();
-    }
-
-    public boolean equals(Variable other) {
-        return this.identifier.equals(other.identifier);
     }
 
     public SymbolicExpression eval(Environment vars) {

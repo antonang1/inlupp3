@@ -23,6 +23,10 @@ public class Calculator {
 
             System.out.print("Please enter an expression: ");
             String input = System.console().readLine();
+            if (input == null) {
+                System.out.print("\n");
+                continue;
+            }
             try {
                 SymbolicExpression expression = parser.parse(input, enviroment);
 
