@@ -5,211 +5,132 @@ public class Test {
         if (expected.equals("" + e)) {
             System.out.println("Passed: " + e);
         } else {
-            System.out.println("Error: expected '" + expected + "' but got '" + e + "'");
+            System.out.println("Error: expected '" + expected
+                               + "' but got '" + e + "'");
         }
     }
 
-    public static void testEvaluating(SymbolicExpression expected, SymbolicExpression e, Environment vars) {
+    public static void testEvaluating(SymbolicExpression expected, 
+                                    SymbolicExpression e, Environment vars) {
         SymbolicExpression r = e.eval(vars);
         if (r.equals(expected)) {
             System.out.println("Passed: " + e + " => " + r);
         } else {
-            System.out.println("Error: " + e + ": expected '" + expected + "' but got '" + r + "'");
-        }
-    }
-
-    private static void testEquals(String description,
-            SymbolicExpression actual,
-            SymbolicExpression expected,
-            boolean expectedResult) {
-        boolean result = actual.equals(expected);
-
-        System.out.println(description + ": "
-                + (result == expectedResult ? "PASS" : "FAIL"));
-
-        if (result != expectedResult) {
-            System.out.println("  Expected: " + expectedResult);
-            System.out.println("  Got: " + result);
+            System.out.println("Error: " + e + ": expected '" + expected
+                               + "' but got '" + r + "'");
         }
     }
 
     public static void main(String[] args) {
-        System.out.println("=== TESTING NAMED CONSTANTS ===");
+        System.out.print("Test constructors and toString(): \n");
+        Multiplication m = new Multiplication(new Addition(new Constant(5),
+                                                           new Variable("x")),
+                                              new Constant(2));
+        testPrinting("(5.0 + x) * 2.0", m);
+        Assignment a1 =
+            new Assignment(new Division(new Constant(4),
+                                        new NamedConstant("pi", 3.14)),
+                           new Variable("x"));
+        testPrinting("(4.0 / 3.14) = x", a1);
 
-        // Test 1: Check that pi exists
-        if (Constants.namedConstants.containsKey("pi")) {
-        System.out.println("PASS: Found pi");
-        } else {
-        System.out.println("FAIL: Could not find pi");
-        }
+        Cos c = new Cos(new Log(new Sin(new Constant(0))));
+        testPrinting("cos(log(sin(0.0)))", c);
+        Negation n = new Negation(new Subtraction(new Exp(new Constant(0)),
+                                                  new Constant(2)));
+        testPrinting("-(exp(0.0) - 2.0)", n);
+        
+        System.out.print("\nTest evaluating: \n");
+        Environment env = new Environment();
+        SymbolicExpression a2 = new Addition(new Constant(5), new Constant(37));
+        SymbolicExpression b = new Constant(42);
+        testEvaluating(b, a2, env);
 
-        // Test 2: Check pi's value
-        double piValue = Constants.namedConstants.get("pi");
+        // Unära operationer med konstanter
+        testEvaluating(new Constant(-3), new Negation(new Constant(3)),
+                       new Environment());
+        testEvaluating(new Constant(0), new Sin(new Constant(0)),
+                       new Environment());
 
-        if (piValue == Math.PI) {
-        System.out.println("PASS: pi has the correct value");
-        } else {
-        System.out.println("FAIL: pi has an incorrect value");
-        }
-
-        // Test 3: Create and evaluate a NamedConstant
-        NamedConstant pi = new NamedConstant(
-        "pi",
-        Constants.namedConstants.get("pi")
-        );
-
-        if (pi.eval(new Environment()) == pi) {
-        System.out.println("PASS: NamedConstant evaluates to itself");
-        } else {
-        System.out.println("FAIL: NamedConstant evaluation failed");
-        }
-
-        // Test 4: Check an unknown name
-        if (!Constants.namedConstants.containsKey("unknown")) {
-        System.out.println("PASS: Unknown name is not a named constant");
-        } else {
-        System.out.println("FAIL: Unknown name was found");
-        }
-
-        testEvaluating(pi, new Assignment(new Constant(4), pi), new Environment());
-        /*
-        // ---------- eval() utan variabler (ny Environment per test) ----------
-        testEvaluating(new Constant(5), new Constant(5), new Environment());
-        testEvaluating(new Constant(7),
-                new Addition(new Constant(5), new Constant(2)), new Environment());
-        testEvaluating(new Constant(6),
-                new Subtraction(new Constant(10), new Constant(4)), new Environment());
-        testEvaluating(new Constant(2.5),
-                new Division(new Constant(10), new Constant(4)), new Environment());
-        testEvaluating(new Constant(14),
-                new Multiplication(new Addition(new Constant(5), new Constant(2)), new Constant(2)),
-                new Environment());
-        testEvaluating(new Constant(-3), new Negation(new Constant(3)), new Environment());
-        testEvaluating(new Constant(0), new Sin(new Constant(0)), new Environment());
-        testEvaluating(new Constant(1), new Cos(new Constant(0)), new Environment());
-        testEvaluating(new Constant(1), new Exp(new Constant(0)), new Environment());
-        testEvaluating(new Constant(0), new Log(new Constant(1)), new Environment());
-
-        // Okänd variabel: ska förbli symbolisk
+        // Okänd variabel förblir symbolisk
         testEvaluating(new Addition(new Constant(5), new Variable("x")),
-                new Addition(new Constant(5), new Variable("x")), new Environment());
-        testEvaluating(new Sin(new Variable("x")),
-                new Sin(new Variable("x")), new Environment());
+                       new Addition(new Constant(5), new Variable("x")),
+                       new Environment());
 
-        // Named constant
-        testEvaluating(new NamedConstant("pi", Math.PI),
-                new NamedConstant("pi", Math.PI), new Environment());
-
-        // ---------- eval() med variabler ----------
-        // hashCode: två lika variabler måste hasha lika
-        Variable h1 = new Variable("a");
-        Variable h2 = new Variable("a");
-        System.out.println("a = " + h1.hashCode() + "\nb = " + h2.hashCode());
-
-        // (5 + x) * 2 med x = 8 ska bli 26.0 (exemplet ur uppgiften)
+        // Variabel med värde i miljön: (5 + x) * 2 med x = 8 ska bli 26
         Environment env1 = new Environment();
         env1.put(new Variable("x"), new Constant(8));
         testEvaluating(new Constant(26),
-                new Multiplication(new Addition(new Constant(5), new Variable("x")), new Constant(2)),
-                env1);
+                       new Multiplication(new Addition(new Constant(5),
+                                                       new Variable("x")),
+                                          new Constant(2)),
+                       env1);
 
-        // 3 = x returnerar 3 och x är satt efteråt
+        // Tilldelning: 3 = x returnerar 3 och x är satt efteråt
         Environment env2 = new Environment();
-        testEvaluating(new Constant(3), new Assignment(new Constant(3), new Variable("x")), env2);
+        testEvaluating(new Constant(3),
+                       new Assignment(new Constant(3), new Variable("x")),
+                       env2);
         testEvaluating(new Constant(3), new Variable("x"), env2);
 
-        // 2 = x = y sätter både x och y
+        // Kedjad tilldelning: 2 = x = y sätter både x och y
         Environment env3 = new Environment();
         testEvaluating(new Constant(2),
-                new Assignment(new Assignment(new Constant(2), new Variable("x")), new Variable("y")),
-                env3);
-        testEvaluating(new Constant(2), new Variable("x"), env3);
+                       new Assignment(new Assignment(new Constant(2),
+                                                     new Variable("x")),
+                                      new Variable("y")),
+                       env3);
         testEvaluating(new Constant(2), new Variable("y"), env3);
-
-        // Vänsterledet räknas ut med variabler: 1 = x, sedan x + 1 = y
-        Environment env4 = new Environment();
-        testEvaluating(new Constant(1), new Assignment(new Constant(1), new Variable("x")), env4);
-        testEvaluating(new Constant(2),
-                new Assignment(new Addition(new Variable("x"), new Constant(1)), new Variable("y")),
-                env4);
-
-        // Ny tilldelning skriver över: 5 = x, sedan 7 = x
-        Environment env5 = new Environment();
-        testEvaluating(new Constant(5), new Assignment(new Constant(5), new Variable("x")), env5);
-        testEvaluating(new Constant(7), new Assignment(new Constant(7), new Variable("x")), env5);
-        testEvaluating(new Constant(7), new Variable("x"), env5);
 
         // Sidoeffekt inuti uttryck, vänster till höger: (1 = x) + x ska bli 2
         testEvaluating(new Constant(2),
-                new Addition(new Assignment(new Constant(1), new Variable("x")), new Variable("x")),
-                new Environment());
-         */
+                       new Addition(new Assignment(new Constant(1),
+                                                   new Variable("x")),
+                                    new Variable("x")),
+                       new Environment());
 
-        /*
-         * ---------- Gamla tester (printing/equals) ----------
-         * Constant d1 = new Constant(5);
-         * Constant d2 = new Constant(2);
-         * Variable v = new Variable("x");
-         * Addition a = new Addition(d1, v);
-         * Multiplication m = new Multiplication(a, d2);
-         * 
-         * testPrinting("(5.0 + x) * 2.0", m);
-         * 
-         * // Constants
-         * Constant c1 = new Constant(5);
-         * Constant c2 = new Constant(5);
-         * Constant c3 = new Constant(2);
-         * 
-         * testEquals("Same constant object", c1, c1, true);
-         * testEquals("Different constants, same value", c1, c2, true);
-         * testEquals("Different constants, different value", c1, c3, false);
-         * 
-         * // Variables
-         * Variable v1 = new Variable("x");
-         * Variable v2 = new Variable("x");
-         * Variable v3 = new Variable("y");
-         * 
-         * testEquals("Same variable name", v1, v2, true);
-         * testEquals("Different variable names", v1, v3, false);
-         * testEquals("Variable vs constant", v1, c1, false);
-         * 
-         * // Binary expressions
-         * Addition a1 = new Addition(c1, v1);
-         * Addition a2 = new Addition(c2, v2);
-         * Addition a3 = new Addition(v1, c1);
-         * 
-         * testEquals("Equal additions", a1, a2, true);
-         * testEquals("Addition with reversed operands", a1, a3, false);
-         * testEquals("Addition vs multiplication", a1,
-         * new Multiplication(c1, v1), false);
-         * 
-         * // Nested expressions
-         * Multiplication m1 = new Multiplication(a1, c3);
-         * Multiplication m2 = new Multiplication(a2, new Constant(2));
-         * Multiplication m3 = new Multiplication(c3, a1);
-         * 
-         * testEquals("Equal nested expressions", m1, m2, true);
-         * testEquals("Nested expressions with reversed operands", m1, m3, false);
-         * 
-         * // Unary expressions
-         * Sin s1 = new Sin(v1);
-         * Sin s2 = new Sin(v2);
-         * Cos cos1 = new Cos(v1);
-         * 
-         * testEquals("Equal unary expressions", s1, s2, true);
-         * testEquals("Different unary operators", s1, cos1, false);
-         * 
-         * // Different expression types
-         * testEquals("Addition vs variable", a1, v1, false);
-         * testEquals("Constant vs addition", c1, a1, false);
-         * 
-         * // Null
-         * testEquals("Expression vs null", c1, null, false);
-         * 
-         * Vars x1 = new Vars();
-         * Vars x2 = new Vars();
-         * // Commands (adapt to your constructors/singletons)
-         * testEquals("Same command type", x1, x2, true);
-         */
+        // Named constant i en tilldelning: Answer = x ska ge x värdet 42
+        NamedConstant answer =
+            new NamedConstant("Answer", Constants.namedConstants.get("Answer"));
+        Environment env4 = new Environment();
+        testEvaluating(answer, new Assignment(answer, new Variable("x")), env4);
+        testEvaluating(new Constant(84),
+                       new Addition(new Variable("x"), new Variable("x")),
+                       env4);
+
+        // Negativt test: 43 = Answer ska kasta IllegalAssignmentException
+        Environment env5 = new Environment();
+        try {
+            new Assignment(new Constant(43), answer).eval(env5);
+            System.out.println("Error: 43 = Answer: expected "
+                               + "IllegalAssignmentException");
+        } catch (IllegalAssignmentException e) {
+            System.out.println("Passed: 43 = Answer => " + e.getMessage());
+        }
+
+        // Negativt test: commands får inte utvärderas
+        try {
+            Vars.instance().eval(new Environment());
+            System.out.println("Error: Vars: expected exception from eval");
+        } catch (RuntimeException e) {
+            System.out.println("Passed: Vars => " + e.getMessage());
+        }
+
+        System.out.print("Test isCommand()\n");
+        if (Vars.instance().isCommand()
+            && Clear.instance().isCommand()
+            && Quit.instance().isCommand()) {
+            System.out.println("Passed: All commands detected");    
+        } else {
+            System.out.println("Error: Commands not detected");
+        }
+        
+        Addition a3 = new Addition(new Constant(2), new Constant(3));
+        if (!a3.isCommand()) {
+            System.out.println("Passed: Binary is not a command");    
+        } else {
+            System.out.println("Error: Binary was interperated as command");
+        }
+        
+
     }
 }
